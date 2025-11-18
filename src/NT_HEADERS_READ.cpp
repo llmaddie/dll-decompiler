@@ -1,8 +1,26 @@
+#include <iostream>
+#include <fstream>
+#include <stdint.h>
 #include <windows.h>
+// const 
+#define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
+typedef uint32_t DWORD;
+typedef uint16_t WORD;
+typedef uint8_t BYTE;
+typedef uint64_t ULONGLONG;
+
+// data directory : 
+#pragma pack(push, 1)
+struct IMAGE_DATA_DIRECTORY {
+    DWORD VirtualAddress;   // rva 
+    DWORD Size;
+};
+#pragma pack(pop)
+// --- IMAGE_FILE_HEADER ---
 #pragma pack(push, 1)
 struct My_IMAGE_FILE_HEADER {
-    WORD    Machine;           // Architecture (ex: 0x014C pour x86, 0x8664 pour x64)
-    WORD    NumberOfSections; 
+    WORD    Machine;
+    WORD    NumberOfSections;
     DWORD   TimeDateStamp;
     DWORD   PointerToSymbolTable;
     DWORD   NumberOfSymbols;
@@ -11,87 +29,90 @@ struct My_IMAGE_FILE_HEADER {
 };
 #pragma pack(pop)
 
+// --- IMAGE_OPTIONAL_HEADER32---
 #pragma pack(push, 1)
-
-struct My_IMAGE_NT_HEADERS {
-    DWORD Signature; // 0x00004550 ('PE\0\0')
-    My_IMAGE_FILE_HEADER FileHeader; 
-};
-#pragma pack(pop)
-#pragma pack(push, 1)
-struct IMAGE_OPTIONAL_HEADER_COMMON {
-    WORD    Magic;                      // 0x10B (PE32) ou 0x20B (PE32+)
+struct My_IMAGE_OPTIONAL_HEADER32 {
+    WORD    Magic;
     BYTE    MajorLinkerVersion;
     BYTE    MinorLinkerVersion;
     DWORD   SizeOfCode;
     DWORD   SizeOfInitializedData;
     DWORD   SizeOfUninitializedData;
-};
-#pragma pack(pop)
-#pragma pack(push, 1)
-
-struct My_IMAGE_OPTIONAL_HEADER32 {
-    // Adresse (4 octets)
-    DWORD   AddressOfEntryPoint;        // Où commence l'exécution (RVA)
+    // --- 
+    DWORD   AddressOfEntryPoint;
     DWORD   BaseOfCode;
-    DWORD   BaseOfData;
-
-    // Adresses de base de limage  en mémoire (4 octets)
-    DWORD   ImageBase;      
+    DWORD   BaseOfData; 
+    DWORD   ImageBase;
     DWORD   SectionAlignment;
     DWORD   FileAlignment;
-    
-    DWORD   SizeOfImage;                
-    DWORD   NumberOfRvaAndSizes;        // Nombre d'entrées dans le DataDirectory
+    WORD    MajorOperatingSystemVersion;
+    WORD    MinorOperatingSystemVersion;
+    WORD    MajorImageVersion;
+    WORD    MinorImageVersion;
+    WORD    MajorSubsystemVersion;
+    WORD    MinorSubsystemVersion;
+    DWORD   Win32VersionValue;
+    DWORD   SizeOfImage;
+    DWORD   SizeOfHeaders;
+    DWORD   CheckSum;
+    WORD    Subsystem;
+    WORD    DllCharacteristics;
+    DWORD   SizeOfStackReserve;
+    DWORD   SizeOfStackCommit;
+    DWORD   SizeOfHeapReserve;
+    DWORD   SizeOfHeapCommit;
+    DWORD   LoaderFlags;
+    DWORD   NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 };
-
 #pragma pack(pop)
 
+// --- IMAGE_OPTIONAL_HEADER64---
 #pragma pack(push, 1)
-
 struct My_IMAGE_OPTIONAL_HEADER64 {
-    ULONGLONG AddressOfEntryPoint;      
-    ULONGLONG BaseOfCode;
-
-    // Adresses de base de l'image en mémoire (8 octets)
-    ULONGLONG ImageBase;              
+    WORD    Magic;
+    BYTE    MajorLinkerVersion;
+    BYTE    MinorLinkerVersion;
+    DWORD   SizeOfCode;
+    DWORD   SizeOfInitializedData;
+    DWORD   SizeOfUninitializedData;
+    // --- 
+    DWORD   AddressOfEntryPoint;
+    DWORD   BaseOfCode;
+    // (BaseOfData not here)
+    ULONGLONG ImageBase; 
     DWORD   SectionAlignment;
     DWORD   FileAlignment;
-
-    DWORD   SizeOfImage;                
-    // ...
-
-    DWORD   NumberOfRvaAndSizes;       
+    WORD    MajorOperatingSystemVersion;
+    WORD    MinorOperatingSystemVersion;
+    WORD    MajorImageVersion;
+    WORD    MinorImageVersion;
+    WORD    MajorSubsystemVersion;
+    WORD    MinorSubsystemVersion;
+    DWORD   Win32VersionValue;
+    DWORD   SizeOfImage;
+    DWORD   SizeOfHeaders;
+    DWORD   CheckSum;
+    WORD    Subsystem;
+    WORD    DllCharacteristics;
+    ULONGLONG SizeOfStackReserve; // ULONGLONG = 8 octets 
+    ULONGLONG SizeOfStackCommit;  
+    ULONGLONG SizeOfHeapReserve;  
+    ULONGLONG SizeOfHeapCommit;   
+    DWORD   LoaderFlags;
+    DWORD   NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 };
 #pragma pack(pop)
+
+// --- IMAGE_NT_HEADERS 
 #pragma pack(push, 1)
-struct My_IMAGE_OPTIONNAL_HEADER32 {
-    // champs commun identique au ceux précedent 
-    // adresse de 4 octets 
-    DWORD AddressOfEntryPoint;      // where start the RVA execution
-    DWORD BaseOfCode;
-    DWORD BaseOfData;
-
-    // adresse of base image 4 octets
-    DWORD ImageBase;
-    DWORD SectionAlignment;
-    DWORD FileAlignment;
-    // .... optionnal other like version, os etc... 
-
-    DWORD SizeOfImage;
-    /// ... 
-    DWORD NumberOfRvaAndSizes;
-    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-};
-
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-
-struct My_IMAGE_DATA_DIRECTORY {
-        DWORD VirtualAdresses;           // RVA of the table
-        DWORD  Size;
+struct My_IMAGE_NT_HEADERS {
+    DWORD Signature;
+    My_IMAGE_FILE_HEADER FileHeader;
+    union {
+        My_IMAGE_OPTIONAL_HEADER32 OptionalHeader32;
+        My_IMAGE_OPTIONAL_HEADER64 OptionalHeader64;
+    };
 };
 #pragma pack(pop)
