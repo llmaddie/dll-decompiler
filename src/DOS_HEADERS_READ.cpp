@@ -7,7 +7,7 @@
 #pragma pack(push, 1)
 
 struct My_IMAGE_DOS_HEADER {
-WORD   e_magic;     // 0x5a4d (MZ)
+    WORD   e_magic;     // 0x5a4d (MZ)
     WORD   e_cblp;
     WORD   e_cp;
     WORD   e_crlc;
@@ -25,5 +25,7 @@ WORD   e_magic;     // 0x5a4d (MZ)
     WORD   e_oemid;
     WORD   e_oeminfo;
     WORD   e_res2[10];
+    LONG   e_lfanew;   // critical offset 
+};
 
-}
+#pragma pack(pop)

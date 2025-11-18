@@ -1,3 +1,5 @@
+#include <windows.h>
+#pragma pack(push, 1)
 struct My_IMAGE_FILE_HEADER {
     WORD    Machine;           // Architecture (ex: 0x014C pour x86, 0x8664 pour x64)
     WORD    NumberOfSections; 
@@ -7,12 +9,16 @@ struct My_IMAGE_FILE_HEADER {
     WORD    SizeOfOptionalHeader;
     WORD    Characteristics;
 };
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 
 struct My_IMAGE_NT_HEADERS {
     DWORD Signature; // 0x00004550 ('PE\0\0')
     My_IMAGE_FILE_HEADER FileHeader; 
 };
-
+#pragma pack(pop)
+#pragma pack(push, 1)
 struct IMAGE_OPTIONAL_HEADER_COMMON {
     WORD    Magic;                      // 0x10B (PE32) ou 0x20B (PE32+)
     BYTE    MajorLinkerVersion;
@@ -21,6 +27,7 @@ struct IMAGE_OPTIONAL_HEADER_COMMON {
     DWORD   SizeOfInitializedData;
     DWORD   SizeOfUninitializedData;
 };
+#pragma pack(pop)
 #pragma pack(push, 1)
 
 struct My_IMAGE_OPTIONAL_HEADER32 {
@@ -58,5 +65,33 @@ struct My_IMAGE_OPTIONAL_HEADER64 {
     DWORD   NumberOfRvaAndSizes;       
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 };
+#pragma pack(pop)
+#pragma pack(push, 1)
+struct My_IMAGE_OPTIONNAL_HEADER32 {
+    // champs commun identique au ceux précedent 
+    // adresse de 4 octets 
+    DWORD AddressOfEntryPoint;      // where start the RVA execution
+    DWORD BaseOfCode;
+    DWORD BaseOfData;
 
+    // adresse of base image 4 octets
+    DWORD ImageBase;
+    DWORD SectionAlignment;
+    DWORD FileAlignment;
+    // .... optionnal other like version, os etc... 
+
+    DWORD SizeOfImage;
+    /// ... 
+    DWORD NumberOfRvaAndSizes;
+    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+};
+
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+
+struct My_IMAGE_DATA_DIRECTORY {
+        DWORD VirtualAdresses;           // RVA of the table
+        DWORD  Size;
+};
 #pragma pack(pop)
