@@ -2,6 +2,7 @@
 #include <fstream>
 #include <stdint.h>
 #include <windows.h>
+
 // const 
 #define IMAGE_NUMBEROF_DIRECTORY_ENTRIES 16
 typedef uint32_t DWORD;
@@ -14,6 +15,24 @@ typedef uint64_t ULONGLONG;
 struct IMAGE_DATA_DIRECTORY {
     DWORD VirtualAddress;   // rva 
     DWORD Size;
+};
+#pragma pack(pop)
+// --- IMAGE SECTION HEADERS --- 
+#pragma pack(push, 1)
+struct MY_IMAGE_SECTION_HEADERS {
+    BYTE Name[IMAGE_SIZEOF_SHORT_NAME]; // name of the section 
+    union {
+        DWORD PhysicalAdress;
+        DWORD VirtualSize;
+    } Misc;
+    DWORD VirtualAdress;
+    DWORD SizeOfRawData;
+    DWORD PointerToRawData;
+    DWORD PointerToRelocation;
+    DWORD PointerToLineNumbers;
+    WORD  NumberOfRelocations;
+    WORD NumberOfLineNumbers;
+    DWORD Characteristics;
 };
 #pragma pack(pop)
 // --- IMAGE_FILE_HEADER ---
