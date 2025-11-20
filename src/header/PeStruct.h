@@ -135,3 +135,20 @@ struct My_IMAGE_NT_HEADERS {
     };
 };
 #pragma pack(pop)
+
+#pragma pack(push, 1)
+
+struct IMAGE_EXPORT_DIRECTORY {
+    DWORD Characteristics;
+    DWORD TimeDateStamp;
+    WORD  MajorVersion;
+    WORD  MinorVersion;
+    DWORD NameRVA;
+    DWORD Base;
+    DWORD NumberOfFunctions;
+    DWORD NumberOfNames;
+    DWORD AdressOfFunctions;
+    DWORD AdressOfNames;
+    DWORD AdressOfNameOrdinals;
+}
+#pragma pack(pop)
