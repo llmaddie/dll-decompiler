@@ -1,12 +1,7 @@
-#include <iostream>
-#include <fstream>
 #include <windows.h>
-
-
-// pour éviter le padding entre les membres de la struct
 #pragma pack(push, 1)
 
-struct My_IMAGE_DOS_HEADER {
+struct My_IMAGE_DOS_HEADER { 
     WORD   e_magic;     // 0x5a4d (MZ)
     WORD   e_cblp;
     WORD   e_cp;
@@ -25,7 +20,7 @@ struct My_IMAGE_DOS_HEADER {
     WORD   e_oemid;
     WORD   e_oeminfo;
     WORD   e_res2[10];
-    LONG   e_lfanew;   // critical offset 
+    LONG   e_lfanew;   // critical offset
 };
 
 #pragma pack(pop)
