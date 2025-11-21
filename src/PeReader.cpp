@@ -47,3 +47,14 @@ for (DWORD i = 0; i < exportDir.NumberOfNames; ++i) {
         file.seekg(nameOffset);
         file.read(functionName, sizeof(functionName) - 1);
 }
+
+// obtain the index of EAT func 
+    WORD functionIndex = nameOrdinals[i];
+// obtain the index of the func ( RVA code)
+    DWORD functionRVA = functionAdresses[functionIndex];
+
+        std::cout << std::left <<std::setw(30) << functionName
+                  << " -> RVA: 0x" << std::hex << functionRVA
+                  << " (Ordinal: " << std::dec << (exportDir.base + functionIndex) << ")"
+                  << std::endl;
+}
