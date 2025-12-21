@@ -48,7 +48,7 @@ for (DWORD i = 0; i < exportDir.NumberOfNames; ++i) {
         file.read(functionName, sizeof(functionName) - 1);
 }
 
-// obtain the index of EAT func 
+// obtain the index of EAT func  zez
     WORD functionIndex = nameOrdinals[i];
 // obtain the index of the func ( RVA code)
     DWORD functionRVA = functionAdresses[functionIndex];
